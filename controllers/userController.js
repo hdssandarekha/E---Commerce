@@ -1,5 +1,7 @@
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
 
 export function createUser(req , res){
 
@@ -54,9 +56,22 @@ export function loginUser(req , res){
 
             if(isPasswordValid)
             {
+                const token = jwt.sign(
+                    {
+                        email :user.email,
+                        firstName : user.firstName,
+                        lastName : user.lastName,
+                        role : user.role,
+                        image : user.image,
+                        isEmailVerified : user.isEmailVerified
+                    } ,
+                    "i-computers-54!") 
+                
+                    
                 res.json(
                     {
-                        message : " Login Successful"
+                        message : " Login Successful",
+                        token : token,
                     }
                 )
             }
@@ -71,11 +86,11 @@ export function loginUser(req , res){
     }
    ).catch(
     () =>(
-        res.status(500).res.json(
+        res.status(500).json(
         {
             message : "Internal Server Error"
         }
     )
     )
- ) 
+) 
 }
